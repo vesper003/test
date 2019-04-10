@@ -1,0 +1,1162 @@
+﻿﻿<!doctype html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html" ;="" charset="UTF-8;">
+    
+    
+    
+    
+    
+    
+    
+    <title>Untitled Document</title>
+
+    <style type="text/css">
+        body {
+            margin: 0;
+            padding: 0;
+            word-break: break-word;
+            width: 970px;
+            height: 1300px;
+            text-align: justify;
+        }
+
+        body, td, th, header, footer {
+            font-family: 'Arial Unicode MS';
+            font-size: 13pt;
+        }
+
+        .bodyFont {
+            font-family: 'Arial Unicode MS';
+            font-size: 13pt;
+        }
+
+        .headFont1 {
+            font-family: 'Arial Unicode MS';
+            font-size: 18pt;
+        }
+
+        .headFont2 {
+            font-family: 'Arial Unicode MS';
+            font-size: 15pt;
+        }
+
+        .main td {
+            vertical-align: top;
+            padding: 10px 5px;
+        }
+
+        .mixingRatio {
+            width: 100%;
+            margin-bottom: 10px;
+            border: none;
+        }
+
+        .mixingRatio td {
+            border: none;
+            padding: 2px 2px;
+        }
+
+        .potLifeTable {
+            margin-bottom: 10px;
+            border: none;
+        }
+
+        .potLifeTable td {
+            border: none;
+            padding: 2px 2px;
+        }
+
+        .filmThicknessTable {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .linkDryingTimeTable {
+            width: 100%;
+        }
+
+        .dryingTimeTable {
+            width: 100%;
+        }
+
+        .instructionsItem {
+            margin-top: 15px;
+        }
+
+        .instructionsItemHeader {
+            font-weight: bold;
+            text-align: left !important;
+            font-size: 15pt;
+        }
+
+        .page-break {
+            page-break-before: always;
+        }
+
+        .firstPagesDescryptionHeader {
+            display: inline-block;
+            width: 25%;
+            font-family: 'Arial Unicode MS';
+            float: left;
+            margin-bottom: 21px;
+            vertical-align: top;
+            text-align: left !important;
+        }
+
+        .firstPagesDescryptionBody {
+            display: inline-block;
+            width: 74.5018%;
+            font-family: 'Arial Unicode MS';
+            float: right;
+            margin-bottom: 21px;
+            page-break-inside: auto;
+            break-inside: auto;
+        }
+
+        .technicalTableHeader {
+            text-align: left !important;
+            font-size: 15pt;
+        }
+    </style>
+    <script>
+        var Certificates = [];
+
+        function init() {
+            hideHigenicCertificate();
+
+            var container = document.getElementById('technicalTableContainer');
+            var wrapper = document.getElementById('technicalTableWrapper');
+            var sourceTable = document.getElementById('technicalTableSource');
+
+            var tableWrapper = appendNewTechnicalTable(container);
+            var table = tableWrapper.firstChild;
+
+            var tables = 0;
+
+            for (var i = 0, row; row = sourceTable.rows[i]; i++) {
+                var clone = row.cloneNode(true); // copy children too
+                table.appendChild(clone);
+
+                if (tableWrapper.clientHeight < tableWrapper.scrollHeight) {
+                    //var child = document.createElement('div');
+                    //child.innerHTML = tableWrapper.clientHeight + " < " + tableWrapper.clientHeight;
+                    //tableWrapper.appendChild(child);
+                    tables++;
+                    if(tables > 20)
+                        break;
+
+                    table.removeChild(clone);
+                    i--;
+
+                    tableWrapper = appendNewTechnicalTable(container);
+                    table = tableWrapper.firstChild;
+                }
+            }
+
+            wrapper.parentElement.removeChild(wrapper);
+
+
+            hideAppInstructionsContainer();
+
+            //var elements = document.getElementsByClassName('PDSElementClass');
+            //var header = document.getElementById('TESTTradenameDiv');
+            //console.log(elements.length+" elements");
+            //for (var i = 0; i < elements.length; i++) {
+            //    if(elements[i] != null){
+            //        console.log(elements[i]);
+            //        console.log("HERE " + header.clientHeight);
+            //        elements[i].style.paddingTop = /*header.clientHeight*/ + 'px';
+            //        elements[i].style.height
+            //    }
+            //}
+            //header.style.display = 'none';
+
+            moveInstructionItemsToNextPageIfNeeded();
+
+            SetHealthAndSafety();
+        }
+
+        function SetHealthAndSafety(){
+            var staticText = {
+                en: {
+                    andSeparator: "and",
+                    moreInformation: ' For more information, see data sheet. {0}',
+                    mixingRatio: ' <strong>Mixing ratio: </strong>{0}:{1} parts by volume ({2} : {3}).',
+                    potLife: ' <strong>Pot life at +23°C: </strong>{0}.',
+                    thinner: ' <strong>Thinner and cleaning of equipment: </strong>{0}.',
+                    contains: ' <strong>Contains:</strong> {0}',
+                    containsN: ' Contains: {0}.',
+                    containsSmall: ' Contains small amounts of sensitizing substances: {0}.',
+                    prevent: ' <strong>Prevent environmental damage:</strong> {0} {1}',
+                    allergicInfo: ' Contains {0}. May produce an allergic reaction.'
+                }
+            };
+
+            var productContains = [];
+            var productDanger = [];
+            var productCLPHPhrases = [];
+            var productEUHPhrases = [];
+            var productEUH208Phrases = [];
+            var productCLPPPhrases = [];
+            var productTreatedArticlePhrases = [];
+            var productTreatedArticleIngredients = [];
+            var productSensitiveIngredients = [];
+            var productBiocidalIngredient = {};
+            var productDetergencePhrases = [{en:'Contains < 5 % non-ionic surfactants.',sv:'Innehåller < 5 % nonjontensider.',fi:'Sisältää < 5 % ionittomia pinta-aktiivisia aineita.',de:'Enthält < 5 % nicht-ionische Tenside',lv:'Satur < 5 % nejonu virsmaktīvās vielas .',lt:'Sudėtyje yra < 5 % nejoninių surfaktantų.',et:'Sisaldab < 5% mitteioonseid pindaktiivseid aineid.',ru:'Содержит < 5 % неионогенных поверхностноактивных веществ.'}];
+            var productCombinedTreatedArticlePhrases = {};
+
+            var language = 'en';
+            var html = "";
+
+            if(productContains && productContains instanceof Array && productContains.length > 0) html += String.format(' {0}', getCVLSection(productContains, language, staticText[language]['contains'], ','));
+            else if(getSection(productBiocidalIngredient, language) != '') html += staticText[language]['contains'].replace("{0}","").replace(",","");
+
+            if(productContains.length > 0)
+                html += getSection(productBiocidalIngredient, language, ', {0}') + '.';
+            else
+                html += getSection(productBiocidalIngredient, language, '{0}.');
+
+            if(productDanger && productDanger instanceof Array && productDanger.length > 0) html += String.format(' <strong>{0}.</strong>', getCVLSection(productDanger, language));
+
+            if(productCLPHPhrases && productCLPHPhrases instanceof Array && productCLPHPhrases.length > 0) html += String.format(' {0}', getCVLSection(productCLPHPhrases, language));
+
+            if(productEUHPhrases && productEUHPhrases instanceof Array && productEUHPhrases.length > 0) html += String.format(' {0}', getCVLSection(productEUHPhrases, language));
+
+            if(productEUH208Phrases && productEUH208Phrases instanceof Array && productEUH208Phrases.length > 0) html += String.format(' {0}', getCVLSection(productEUH208Phrases, language, staticText[language]['allergicInfo'], ',', ' ' + staticText[language]['andSeparator']));
+
+            if(productCLPPPhrases && productCLPPPhrases instanceof Array && productCLPPPhrases.length > 0) html += String.format(' {0}', getCVLSection(productCLPPPhrases, language));
+
+            if(productSensitiveIngredients && productSensitiveIngredients instanceof Array && productSensitiveIngredients.length > 0)
+                html += String.format(' {0}', getCVLSection(productSensitiveIngredients, language, staticText[language]['containsSmall'], ',', ' ' + staticText[language]['andSeparator']));
+
+            if(productTreatedArticlePhrases && productTreatedArticlePhrases instanceof Array && productTreatedArticlePhrases.length > 0)
+                html += String.format(' {0}', getCVLSection(productTreatedArticlePhrases, language));
+
+            if(productCombinedTreatedArticlePhrases)
+                html += String.format(' {0}', getSection(productCombinedTreatedArticlePhrases, language))
+
+            if(productTreatedArticleIngredients && productTreatedArticleIngredients instanceof Array && productTreatedArticleIngredients.length > 0)
+                html += String.format(' {0}', getCVLSection(productTreatedArticleIngredients, language, staticText[language]['containsN'], ',', ' ' + staticText[language]['andSeparator']));
+
+            if(productDetergencePhrases && productDetergencePhrases instanceof Array && productDetergencePhrases.length > 0)
+                html += String.format(' {0}', getCVLSection(productDetergencePhrases, language));
+
+            html += '</p></div>';
+
+            if(html.length > 11)
+                document.getElementById('HealthAndSafety').innerHTML = html;
+        }
+
+        function lsToArray(localeString) {
+            localeString = localeString || '';
+            localeString = localeString.split("^").join(":");
+
+            var result = {};
+            var items = localeString.split(',');
+            for (var i = 0; i < items.length; i++) {
+                var current = items[i].split(':');
+                if(current.length == 2) {
+                    result[current[0].trim()] = current[1].trim();
+                }
+            }
+            return result;
+        }
+
+        function getSection(property, language, stringFormat) {
+
+            stringFormat = stringFormat || ' {0}';
+            var html = '';
+            if(property) {
+                var item;
+                if(typeof property === 'string') {
+                    item = property;
+                }
+                else {
+                    item = property[language];
+                }
+
+                if(item && item.length > 0) {
+                    html += String.format(stringFormat, item.trim());
+                }
+            }
+            return html;
+        }
+
+        function getCVLSection(property, language, stringFormat, itemSeparator, lastItemSeparator) {
+
+            stringFormat = stringFormat || ' {0}';
+            itemSeparator = itemSeparator || '';
+            lastItemSeparator = lastItemSeparator || itemSeparator;
+            var separatorLen = itemSeparator.length + 1;
+            var html = '';
+            if(property && property instanceof Array) {
+                var arrayLength = property.length;
+                for (var i = 0; i < arrayLength; i++) {
+                    var ls = property[i];
+                    var item = ls[language];
+
+                    if(item) {
+                        html += item.trim();
+                        html += i === arrayLength - 2 ? lastItemSeparator : itemSeparator;
+                        html += ' ';
+                    }
+                }
+            }
+            html = html.substr(0, html.length - separatorLen);
+            return String.format(stringFormat, html);
+        }
+
+        String.format = function(format) {
+            var args = Array.prototype.slice.call(arguments, 1);
+            return format.replace(/{(\d+)}/g, function(match, number) {
+                return typeof args[number] != 'undefined'
+                  ? args[number]
+                  : match
+                ;
+            });
+        };
+
+        function checkSectionVisible(properties) {
+            result = true;
+            for (var i = 0; i < properties.length; i++) {
+                if(!properties[i] || properties.length === 0) {
+                    result = false;
+                    break;
+                }
+            }
+            return result;
+        }
+
+        function moveInstructionItemsToNextPageIfNeeded(){
+            var currentDiv = 10;
+            var pageHeight = document.getElementById('body').clientHeight * 0.84;//0.716539;
+            //var savediv = document.getElementById('EmptyDiv4');
+            //console.log('main client height: ' + document.getElementById('body').clientHeight);
+            //savediv.innerHTML += '<span style="font-size:,30;">' + 'main client height: ' + document.getElementById('body').clientHeight + '</br>';
+
+            //console.log('main client height * 0.1: ' +( document.getElementById('body').clientHeight * 0.1));
+            //savediv.innerHTML += 'main client height * 0.1: ' + (document.getElementById('body').clientHeight*0.1)  + '</br>';
+
+            //console.log('main client height * 0.8: ' +( document.getElementById('body').clientHeight * 0.8));
+            //savediv.innerHTML += 'main client height * 0.8: ' + (document.getElementById('body').clientHeight*0.8)  + '</br>';
+
+            var instructionItems = document.getElementsByClassName('instructionsItem');
+            var temp = 0;
+            for (var i = 0; i < instructionItems.length; i++) {
+                if(instructionItems[i] && instructionItems[i].clientHeight > 0 ){
+                    //savediv.innerHTML += 'item height: ' + instructionItems[i].clientHeight + '</br>';
+                    //console.log('item height: ' + instructionItems[i].clientHeight);
+
+                    temp = currentDiv;
+                    currentDiv += instructionItems[i].clientHeight + 15;
+                    if(currentDiv > pageHeight){
+                        //instructionItems[i].style.color = "red";
+                        //savediv.innerHTML += 'rest to end page: ' + (currentDiv % pageHeight) +'</br>';
+
+
+                        if(((temp % pageHeight) > pageHeight * 0.85 )){
+                            //instructionItems[i].style.color = "green";
+                            //savediv.innerHTML += 'breaked at: ' + currentDiv + ' na '+pageHeight+'</br>';
+                            //if(currentDiv > pageHeight)
+                            currentDiv = instructionItems[i].clientHeight;
+                            //savediv.innerHTML += 'after break: ' + currentDiv + ' na '+pageHeight+'</br>';
+                            instructionItems[i].setAttribute("class","page-break");
+                        }
+                        else{
+                            currentDiv = currentDiv % pageHeight;
+                        }
+                    }
+
+                }
+            }
+            //savediv.innerHTML += '</span>';
+        }
+
+        function appendNewTechnicalTable(container) {
+            var child = document.createElement('div');
+            child.innerHTML = '<div style="clear: both; page-break-before: always;"><div style="border: 1px solid #000000; height:1060px;"><table class="main" style="width:920px;"></table></div><div>';
+            var div = child.firstChild;
+            container.appendChild(div);
+
+            return div.firstChild;
+        }
+
+        function hideAppInstructionsContainer() {
+            var AppInstructionsContainer = document.getElementById('AppInstructionsContainer');
+            var elems = document.getElementsByClassName("instructionsItemContent");
+            var flag = false;
+            for (i = 0; i < elems.length; i++) {
+                var elem1 = elems[i].innerHTML;
+                var final = elem1.replace(/\n/g, "").replace(/ /g, "");
+                if (final != "") flag = true;
+            }
+            if (flag == false) AppInstructionsContainer.hidden = true;
+        }
+
+        function hideHigenicCertificate(){
+            for (var i = 0; i < Certificates.length; i++) {
+                if (Certificates[i] == 'HygenicCertification' || Certificates[i] == 'EnglishHygenicCertification') {
+                    return;
+                }
+            }
+            document.getElementById('HygienicCertificate').style.display = 'none';
+        }
+
+    </script>
+
+
+
+</head>
+<body id="body" style="margin: 0; padding: 0;" onload="init();">
+    
+    <div style="clear: both;padding-top:120px; page-break-inside:auto; break-inside:auto;" id="test">
+        <div width="100%" class="main" style="margin-left:7px; margin-top:6px;  page-break-inside:auto; break-inside:auto; ">
+            <div hideifempty="ProductShortProductDescription1" style="; display: none;">
+                <span class="firstPagesDescryptionHeader"><strong class="headFont2">DESCRIPTION</strong></span>
+                <span class="firstPagesDescryptionBody">
+                    <span id="ProductShortProductDescription1">
+                        
+                    </span>
+                </span>
+            </div>
+            <div hideifempty="ProductShortProductDescription3" style="margin-bottom:10px; width:100%; display:block;float:left;">
+                <span class="firstPagesDescryptionHeader"><strong class="headFont2">RECOMMENDED USES</strong></span>
+                <span class="firstPagesDescryptionBody">
+                    <span id="ProductShortProductDescription3">
+                        Very good people<br>
+                    </span>
+                </span>
+            </div>
+            <div hideifempty="ProductShortProductDescription2" style="margin-bottom:10px; width:100%; display:block;float:left;">
+                <span class="firstPagesDescryptionHeader"><strong class="headFont2">PRODUCT FEATURES</strong></span>
+                <span class="firstPagesDescryptionBody">
+                    <span id="ProductShortProductDescription2">
+                        test for test<br>
+                    </span>
+                </span>
+            </div>
+            <div style="float:left; width:100%;">
+                <div colspan="2" style="padding-top:60px; text-align:left;">
+                    <div id="Ecolabels" style="display: inline;">
+                        
+                    </div>
+                    <div id="CertificatesAndApprovals" style="display: inline;">
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="technicalTableContainer"></div>
+    <div id="technicalTableWrapper" style="clear: both; page-break-before: always;">
+        <table id="technicalTableSource" width="100%" style="border: 1px solid #000000;" class="main">
+            <tbody>
+                <tr>
+                    <td colspan="2"><strong class="headFont2">TECHNICAL DATA</strong></td>
+                </tr>
+                <!--<tr hideifempty="ProductAmaCode">
+                    <td width="30%" class="technicalTableHeader"><strong>Paint product group 2012</strong></td>
+                    <td>
+                        <div id="ProductAmaCode">
+                            <pim-param entitytype="Product" fieldname="ProductAmaCode" />
+                        </div>
+                    </td>
+                </tr>-->
+                <tr hideifempty="ProductTechnicalData" style="; display: none;">
+                    <td width="30%" class="technicalTableHeader"><strong>Technical data</strong></td>
+                    <td>
+                        <div id="ProductTechnicalData" style="line-height:0;">
+                            
+                        </div>
+                    </td>
+                </tr>
+                <tr hideifempty="ProductBasePaints" style="; display: none;">
+                    <td width="30%" class="technicalTableHeader"><strong>Base paints</strong></td>
+                    <td>
+                        <div id="ProductBasePaints">
+                            
+                        </div>
+                    </td>
+                </tr>
+                <tr hideifempty="ProductColorCollectionNames,ProductColorGeneralInformation" style="; display: none;">
+                    <td width="30%" class="technicalTableHeader"><strong>Colour Shades</strong></td>
+                    <td>
+                        <div>
+                            <div hideifempty="ProductColorCollectionNames" style="; display: none;">
+                                <strong>Color cards:</strong>
+                            </div>
+                            <div id="ProductColorCollectionNames">
+                                
+                            </div>
+                            <div id="ProductColorGeneralInformation">
+                                
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr hideifempty="ProductGlossLevelName,ProductGlossLevelNameLS">
+                    <td width="30%" class="technicalTableHeader"><strong>Gloss</strong></td>
+                    <td>
+                        <span hideifempty="ProductGlossLevelName">
+                            <span id="ProductGlossLevelName">Matt</span><span>.</span>
+                        </span>
+                        <span id="ProductGlossLevelNameLS">
+                            gloss test
+                        </span>
+                    </td>
+                </tr>
+                <tr hideifempty="ProductCommercialBinderLS">
+                    <td width="30%" class="technicalTableHeader"><strong>Binder</strong></td>
+                    <td>
+                        <div id="ProductCommercialBinderLS">
+                            rrre
+                        </div>
+                    </td>
+                </tr>
+                <tr hideifempty="ProductRecommendedFilmThicknessTheoreticalCoverage">
+                    <td width="30%" class="technicalTableHeader"><strong>Coverage</strong></td>
+                    <td>
+                        <div id="ProductRecommendedFilmThicknessTheoreticalCoverage">
+                            13213
+                        </div>
+                    </td>
+                </tr>
+                <tr hideifempty="ProductFillingCapacityLS" style="; display: none;">
+                    <td width="30%" class="technicalTableHeader"><strong>Filling capacity</strong></td>
+                    <td>
+                        <div id="ProductFillingCapacityLS">
+                            
+                        </div>
+                    </td>
+                </tr>
+                <tr hideifempty="ProductNetWeights" style="; display: none;">
+                    <td class="tableLabel technicalTableHeader"><strong>Can sizes</strong></td>
+                    <td>
+                        <div id="ProductNetWeights">
+                            
+                        </div>
+                        <div hideifempty="ProductCanSizeNotesLS" style="; display: none;">
+                            <div id="ProductCanSizeNotesLS">
+                                
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr hideifempty="ProductVolumes" hideifnotempty="ProductNetWeights">
+                    <td class="tableLabel technicalTableHeader"><strong>Can sizes</strong></td>
+                    <td>
+                        <div id="ProductVolumes">
+                            20 l
+                        </div>
+                        <div hideifempty="ProductCanSizeNotesLS2" style="; display: none;">
+                            <div id="ProductCanSizeNotesLS2">
+                                
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr hideifnotempty="ProductVolumes,ProductNetWeights" hideifempty="ProductCanSizeNotesLS2" style="; display: none;">
+                    <td class="tableLabel technicalTableHeader"><strong>Can sizes</strong></td>
+                    <td>
+                        <div id="ProductCanSizeNotesLS2">
+                            
+                        </div>
+                    </td>
+                </tr>
+                <tr hideifempty="ProductMediumLS" style="; display: none;">
+                    <td width="30%" class="technicalTableHeader"><strong>Thinner</strong></td>
+                    <td>
+                        <div id="ProductMediumLS">
+                            
+                        </div>
+                    </td>
+                </tr>
+                <tr hideifempty="ProductPHValue" style="; display: none;">
+                    <td width="30%" class="technicalTableHeader"><strong>pH value</strong></td>
+                    <td>
+                        <div id="ProductPHValue">
+                            
+                        </div>
+                    </td>
+                </tr>
+                <tr hideifempty="MixingRatio,ProductMixingRatioLS">
+                    <td width="30%" class="technicalTableHeader"><strong>Mixing ratio</strong></td>
+                    <td>
+                        <div id="MixingRatio">
+                            
+                        </div>
+                        <div id="ProductMixingRatioLS">
+                            23-5
+                        </div>
+                    </td>
+                </tr>
+                <tr hideifempty="ProductApplicationMethod" style="; display: none;">
+                    <td width="30%" class="technicalTableHeader"><strong>Application method</strong></td>
+                    <td>
+                        <div id="ProductApplicationMethod">
+                            
+                        </div>
+                    </td>
+                </tr>
+                <tr hideifempty="ProductPotLifeAt23C">
+                    <td width="30%" class="technicalTableHeader"><strong>Pot-life (+23°C)</strong></td>
+                    <td>
+                        <div id="ProductPotLifeAt23C">
+                            24
+                        </div>
+                    </td>
+                </tr>
+                <tr hideifempty="ProductPotLifeAt20C">
+                    <td width="30%" class="technicalTableHeader"><strong>Pot-life (+20°C)</strong></td>
+                    <td>
+                        <div id="ProductPotLifeAt20C">
+                            223
+                        </div>
+                    </td>
+                </tr>
+                <tr hideifempty="ProductDryingTimeTable" style="; display: none;">
+                    <td width="30%" class="technicalTableHeader">
+                        <strong>Drying time </strong>
+                    </td>
+                    <td>
+                        <div id="ProductDryingTimeTable" style="text-align:center;">
+                            
+                        </div>
+                    </td>
+                </tr>
+                <tr hideifempty="ProductDryingTime" style="; display: none;">
+                    <td width="30%" class="technicalTableHeader"><strong>Drying time (23°C and 50% relative air humidity)</strong></td>
+                    <td>
+                        <div id="ProductDryingTime">
+                            
+                        </div>
+                    </td>
+                </tr>
+                <tr hideifempty="ProductCuring" style="; display: none;">
+                    <td width="30%" class="technicalTableHeader"><strong>Curing</strong></td>
+                    <td>
+                        <div id="ProductCuring">
+                            
+                        </div>
+                    </td>
+                </tr>
+                <tr hideifempty="ProductCommercialDensity">
+                    <td width="30%" class="technicalTableHeader"><strong>Density (kg/l)</strong></td>
+                    <td>
+                        <div id="ProductCommercialDensity" style="display: initial;">
+                            im testing it now<br>
+                        </div>
+                    </td>
+                </tr>
+                <tr hideifempty="ProductWaterVapourResistance" style="; display: none;">
+                    <td width="30%" class="technicalTableHeader"><strong>Water vapour resistance (EN ISO 7783)</strong></td>
+                    <td>
+                        <div id="ProductWaterVapourResistance">
+                            
+                        </div>
+                    </td>
+                </tr>
+                <tr hideifempty="ProductWaterPermeability" style="; display: none;">
+                    <td width="30%" class="technicalTableHeader"><strong>Water permeability (EN 1062-3)</strong></td>
+                    <td>
+                        <div id="ProductWaterPermeability">
+                            
+                        </div>
+                    </td>
+                </tr>
+                <tr hideifempty="ProductPermeabilityToCO2" style="; display: none;">
+                    <td width="30%" class="technicalTableHeader"><strong>Permeability to CO2 (EN 1062-6)</strong></td>
+                    <td>
+                        <div id="ProductPermeabilityToCO2">
+                            
+                        </div>
+                    </td>
+                </tr>
+                <tr hideifempty="ProductAdhesiveStrengthEN1542" style="; display: none;">
+                    <td width="30%" class="technicalTableHeader"><strong>Adhesive strength (EN 1542)</strong></td>
+                    <td>
+                        <div id="ProductAdhesiveStrengthEN1542">
+                            
+                        </div>
+                    </td>
+                </tr>
+                <tr hideifempty="ProductAdhesiveStrengthEN138928" style="; display: none;">
+                    <td width="30%" class="technicalTableHeader"><strong>Adhesive strength (EN 13892-8)</strong></td>
+                    <td>
+                        <div id="ProductAdhesiveStrengthEN138928">
+                            
+                        </div>
+                    </td>
+                </tr>
+                <tr hideifempty="ProductAdhesiveStrengthEN101512" style="; display: none;">
+                    <td width="30%" class="technicalTableHeader"><strong>Adhesive strength (EN 1015-12)</strong></td>
+                    <td>
+                        <div id="ProductAdhesiveStrengthEN101512">
+                            
+                        </div>
+                    </td>
+                </tr>
+                <tr hideifempty="ProductWeatherResistance" style="; display: none;">
+                    <td width="30%" class="technicalTableHeader"><strong>Weather resistance</strong></td>
+                    <td>
+                        <div id="ProductWeatherResistance">
+                            
+                        </div>
+                    </td>
+                </tr>
+                <tr hideifempty="ProductCompressiveStrength" style="; display: none;">
+                    <td width="30%" class="technicalTableHeader"><strong>Compressive strength</strong></td>
+                    <td>
+                        <div id="ProductCompressiveStrength">
+                            
+                        </div>
+                    </td>
+                </tr>
+                <tr hideifempty="ProductFlexuralStrength" style="; display: none;">
+                    <td width="30%" class="technicalTableHeader"><strong>Flexural strength</strong></td>
+                    <td>
+                        <div id="ProductFlexuralStrength">
+                            
+                        </div>
+                    </td>
+                </tr>
+                <tr hideifempty="ProductShrinkage" style="; display: none;">
+                    <td width="30%" class="technicalTableHeader"><strong>Shrinkage</strong></td>
+                    <td>
+                        <div id="ProductShrinkage">
+                            
+                        </div>
+                    </td>
+                </tr>
+                <tr hideifempty="ProductChemicalResistance" style="; display: none;">
+                    <td width="30%" class="technicalTableHeader"><strong>Chemical resistance</strong></td>
+                    <td>
+                        <div id="ProductChemicalResistance">
+                            
+                        </div>
+                    </td>
+                </tr>
+                <tr hideifempty="ProductDryShrinkage" style="; display: none;">
+                    <td width="30%" class="technicalTableHeader"><strong>Dry shrinkage</strong></td>
+                    <td>
+                        <div id="ProductDryShrinkage">
+                            
+                            
+                        </div>
+                    </td>
+                </tr>
+                <tr hideifempty="ProductFreezeTest" style="; display: none;">
+                    <td width="30%" class="technicalTableHeader"><strong>Freeze-thaw cycling with de-icing salt immersion</strong></td>
+                    <td>
+                        <div id="ProductFreezeTest">
+                            
+                        </div>
+                    </td>
+                </tr>
+                <tr hideifempty="ProductElongationAtBreak" style="; display: none;">
+                    <td width="30%" class="technicalTableHeader"><strong>Elongation at break</strong></td>
+                    <td>
+                        <div id="ProductElongationAtBreak">
+                            
+                        </div>
+                    </td>
+                </tr>
+                <tr hideifempty="ProductTensileStrength" style="; display: none;">
+                    <td width="30%" class="technicalTableHeader"><strong>Tensile strength</strong></td>
+                    <td>
+                        <div id="ProductTensileStrength">
+                            
+                        </div>
+                    </td>
+                </tr>
+                <tr hideifempty="ProductAbrasionResistance" style="; display: none;">
+                    <td width="30%" class="technicalTableHeader"><strong>Abrasion resistance</strong></td>
+                    <td>
+                        <div id="ProductAbrasionResistance">
+                            
+                        </div>
+                    </td>
+                </tr>
+                <tr hideifempty="ProductWashResistance" style="; display: none;">
+                    <td width="30%" class="technicalTableHeader"><strong>Wash resistance</strong></td>
+                    <td>
+                        <div id="ProductWashResistance">
+                            
+                        </div>
+                    </td>
+                </tr>
+                <tr hideifempty="ProductWetScrubResistanceLS" style="; display: none;">
+                    <td width="30%" class="technicalTableHeader"><strong>Wet scrub resistance</strong></td>
+                    <td>
+                        <div id="ProductWetScrubResistanceLS">
+                            
+                        </div>
+                    </td>
+                </tr>
+                <tr hideifempty="ProductHeatResistance" style="; display: none;">
+                    <td width="30%" class="technicalTableHeader"><strong>Heat resistance</strong></td>
+                    <td>
+                        <div id="ProductHeatResistance">
+                            
+                        </div>
+                    </td>
+                </tr>
+                <tr hideifempty="ProductReactionToFire" style="; display: none;">
+                    <td width="30%" class="technicalTableHeader"><strong>Fire class</strong></td>
+                    <td>
+                        <div id="ProductReactionToFire">
+                            
+                        </div>
+                    </td>
+                </tr>
+                <tr hideifempty="ProductLightResistance" style="; display: none;">
+                    <td width="30%" class="technicalTableHeader"><strong>Light resistance</strong></td>
+                    <td>
+                        <div id="ProductLightResistance">
+                            
+                        </div>
+                    </td>
+                </tr>
+                <tr hideifempty="ProductVolumeSolids,ProductVolumeSolidsLS">
+                    <td width="30%" class="technicalTableHeader"><strong>Volume solids (%)</strong></td>
+                    <td>
+                        <div id="ProductVolumeSolidsLS" style="display: initial;">
+                            3333
+                        </div>
+                        <div id="ProductVolumeSolids" hideifnotempty="ProductVolumeSolidsLS" style="; display: none;">
+                            34
+                        </div>
+                    </td>
+                </tr>
+                <tr hideifempty="ProductWeightSolids,ProductWeightSolidsLS">
+                    <td width="30%" class="technicalTableHeader"><strong>Weight solids (%)</strong></td>
+                    <td>
+                        <div id="ProductWeightSolidsLS" style="display: initial;">
+                            342
+                        </div>
+                        <div id="ProductWeightSolids" hideifnotempty="ProductWeightSolidsLS" style="; display: none;">
+                            55
+                        </div>
+                    </td>
+                </tr>
+
+                <tr hideifempty="ProductWaterVapourDiffusionCoefficient" style="; display: none;">
+                    <td width="30%" class="technicalTableHeader"><strong>Water vapour diffusion coefficient</strong></td>
+                    <td>
+                        <div id="ProductWaterVapourDiffusionCoefficient">
+                            
+                        </div>
+                    </td>
+                </tr>
+                <tr hideifempty="ProductSpecialFeature" style="; display: none;">
+                    <td width="30%" class="technicalTableHeader"><strong>Special feature</strong></td>
+                    <td>
+                        <div id="ProductSpecialFeature">
+                            
+                        </div>
+                    </td>
+                </tr>
+                <tr hideifempty="ProductBulkDensity" style="; display: none;">
+                    <td width="30%" class="technicalTableHeader"><strong>Bulk density</strong></td>
+                    <td>
+                        <div id="ProductBulkDensity">
+                            
+                        </div>
+                    </td>
+                </tr>
+                <tr hideifempty="ProductAverageWallThickness" style="; display: none;">
+                    <td width="30%" class="technicalTableHeader"><strong>Average wall thickness</strong></td>
+                    <td>
+                        <div id="ProductAverageWallThickness">
+                            
+                        </div>
+                    </td>
+                </tr>
+                <tr hideifempty="ProductAdhesion" style="; display: none;">
+                    <td width="30%" class="technicalTableHeader"><strong>Adhesion</strong></td>
+                    <td>
+                        <div id="ProductAdhesion">
+                            
+                        </div>
+                    </td>
+                </tr>
+                <tr hideifempty="ProductHardness" style="; display: none;">
+                    <td width="30%" class="technicalTableHeader"><strong>Hardness</strong></td>
+                    <td>
+                        <div id="ProductHardness">
+                            
+                        </div>
+                    </td>
+                </tr>
+                <tr hideifempty="ProductGrainSize" style="; display: none;">
+                    <td width="30%" class="technicalTableHeader"><strong>Grain size</strong></td>
+                    <td>
+                        <div id="ProductGrainSize">
+                            
+                        </div>
+                    </td>
+                </tr>
+                <tr hideifempty="ProductMeltingTemperature" style="; display: none;">
+                    <td width="30%" class="technicalTableHeader"><strong>Melting temperature</strong></td>
+                    <td>
+                        <div id="ProductMeltingTemperature">
+                            
+                        </div>
+                    </td>
+                </tr>
+                <tr hideifempty="ProductWaterAbsorptionLS" style="; display: none;">
+                    <td width="30%" class="technicalTableHeader"><strong>Water absorption</strong></td>
+                    <td>
+                        <div id="ProductWaterAbsorptionLS">
+                            
+                            
+                        </div>
+                    </td>
+                </tr>
+                <tr hideifempty="ProductPenetrationDepth" style="; display: none;">
+                    <td width="30%" class="technicalTableHeader"><strong>Penetration depth</strong></td>
+                    <td>
+                        <div id="ProductPenetrationDepth">
+                            
+                        </div>
+                    </td>
+                </tr>
+                <tr hideifempty="ProductVOCLS" style="; display: none;">
+                    <td width="30%" class="technicalTableHeader"><strong>VOC</strong></td>
+                    <td>
+                        <div id="ProductVOCLS">
+                            
+                        </div>
+                    </td>
+                </tr>
+                <tr hideifempty="ProductStorage" style="; display: none;">
+                    <td width="30%" class="technicalTableHeader"><strong>Storage</strong></td>
+                    <td>
+                        <div id="ProductStorage">
+                            
+                            
+                            
+                        </div>
+                    </td>
+                </tr>
+                <tr hideifempty="ProductMEDCertificateURL" style="; display: none;">
+                    <td width="30%" class="technicalTableHeader"><strong>MED Certificate</strong></td>
+                    <td>
+                        <div id="ProductMEDCertificateURL">
+                            
+                        </div>
+                    </td>
+                </tr>
+                <tr id="HygienicCertificate">
+                    <td width="30%" class="technicalTableHeader"><strong>Hygienic certificate</strong></td>
+                    <td>
+                        <div>
+                            YES
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div id="AppInstructionsContainer" style="clear: both; page-break-before: always; ">
+
+        <div><strong class="headFont2">APPLICATION INSTRUCTIONS</strong></div>
+
+        <div hideifempty="ProductApplicationConditionLS" class="instructionsItem" style="; display: none;">
+            <div class="instructionsItemHeader">Application conditions</div>
+            <div id="ProductApplicationConditionLS" class="instructionsItemContent">
+                
+            </div>
+        </div>
+        <div class="instructionsItem" hideifempty="ProductMixingComponents" style="; display: none;">
+            <div class="instructionsItemHeader">Mixing components</div>
+            <div id="ProductMixingComponents" class="instructionsItemContent">
+                
+            </div>
+        </div>
+        <div class="instructionsItem" hideifempty="ProductSurfacePreparation" style="; display: none;">
+            <div class="instructionsItemHeader">Surface preparation</div>
+            <div id="ProductSurfacePreparation" class="instructionsItemContent">
+                
+            </div>
+        </div>
+        <div class="instructionsItem" hideifempty="ProductPatching" style="; display: none;">
+            <div class="instructionsItemHeader">Patching</div>
+            <div id="ProductPatching" class="instructionsItemContent">
+                
+            </div>
+        </div>
+        <div class="instructionsItem" hideifempty="ProductMortarMixing" style="; display: none;">
+            <div class="instructionsItemHeader">Mortar mixing</div>
+            <div id="ProductMortarMixing" class="instructionsItemContent">
+                
+            </div>
+        </div>
+        <div class="instructionsItem" hideifempty="ProductPrelevelling" style="; display: none;">
+            <div class="instructionsItemHeader">Prelevelling</div>
+            <div id="ProductPrelevelling" class="instructionsItemContent">
+                
+            </div>
+        </div>
+        <div class="instructionsItem" hideifempty="ProductPriming" style="; display: none;">
+            <div class="instructionsItemHeader">Priming</div>
+            <div id="ProductPriming" class="instructionsItemContent">
+                
+            </div>
+        </div>
+        <div class="instructionsItem" hideifempty="ProductUndercoating" style="; display: none;">
+            <div class="instructionsItemHeader">Undercoating</div>
+            <div id="ProductUndercoating" class="instructionsItemContent">
+                
+            </div>
+        </div>
+        <div class="instructionsItem" hideifempty="ProductHeadingApplication" style="; display: none;">
+            <div class="instructionsItemHeader"></div>
+            <div id="ProductHeadingApplication" class="instructionsItemContent">
+                
+            </div>
+        </div>
+        <div class="instructionsItem" hideifempty="ProductTopcoating" style="; display: none;">
+            <div class="instructionsItemHeader">Coating</div>
+            <div id="ProductTopcoating" class="instructionsItemContent">
+                
+            </div>
+        </div>
+        <div class="instructionsItem" hideifempty="ProductScreed" style="; display: none;">
+            <div class="instructionsItemHeader">Screed</div>
+            <div id="ProductScreed" class="instructionsItemContent">
+                
+            </div>
+        </div>
+        <div class="instructionsItem" hideifempty="ProductWorkingJoints" style="; display: none;">
+            <div class="instructionsItemHeader">Joint sealing</div>
+            <div id="ProductWorkingJoints" class="instructionsItemContent">
+                
+            </div>
+        </div>
+        <div class="instructionsItem" hideifempty="ProductAftercare" style="; display: none;">
+            <div class="instructionsItemHeader">Aftercare</div>
+            <div id="ProductAftercare" class="instructionsItemContent">
+                
+            </div>
+        </div>
+        <div class="instructionsItem" hideifempty="ProductNote" style="; display: none;">
+            <div class="instructionsItemHeader">Note</div>
+            <div id="ProductNote" class="instructionsItemContent">
+                
+            </div>
+        </div>
+        <div class="instructionsItem" hideifempty="ProductCleaningOfEquipmentLS" style="; display: none;">
+            <div class="instructionsItemHeader">Cleaning of tools</div>
+            <div id="ProductCleaningOfEquipmentLS" class="instructionsItemContent">
+                
+                
+            </div>
+        </div>
+        <div class="instructionsItem" hideifempty="ProductCareInstruction" style="; display: none;">
+            <div class="instructionsItemHeader">Maintenance instructions</div>
+            <div id="ProductCareInstruction" class="instructionsItemContent">
+                
+            </div>
+        </div>
+        <div class="instructionsItem" hideifempty="ProductMaintenanceTreatment" style="; display: none;">
+            <div class="instructionsItemHeader">Maintenance treatment</div>
+            <div id="ProductMaintenanceTreatment" class="instructionsItemContent">
+                
+            </div>
+        </div>
+        <div class="instructionsItem" hideifempty="ProductPreventingEnvironmentalDamage,ProductSelfIgnition" style="; display: none;">
+            <div class="instructionsItemHeader">Environmental and waste disposal</div>
+            <span id="ProductPreventingEnvironmentalDamage" class="instructionsItemContent">
+                
+            </span>
+            <span id="ProductSelfIgnition" class="instructionsItemContent">
+                
+            </span>
+        </div>
+        <div class="instructionsItem" hideifempty="HealthAndSafety,DangerSymbols">
+            <div class="instructionsItemHeader">HEALTH AND SAFETY LABELLING according to Regulation (EC) No. 1272/2008</div>
+            <!--<span id="ProductSDSPhrase" class="instructionsItemContent">
+                <pim-param entitytype="Product" fieldname="ProductSDSPhrase" cvlseparator=" " />
+            </span>
+            <span id="ProductIngredient" class="instructionsItemContent">
+                <pim-param entitytype="Product" fieldname="ProductIngredient" />
+            </span>
+            <span id="ProductBiocidalIngredient" class="instructionsItemContent">
+                <pim-param entitytype="Product" fieldname="ProductBiocidalIngredient" />
+            </span>
+            <span id="ProductCLPSignalWords" style="font-weight:bold;" class="instructionsItemContent">
+                <pim-param entitytype="Product" fieldname="ProductCLPSignalWords" />
+            </span>
+            <span id="ProductCLPHPhrases" class="instructionsItemContent">
+                <pim-param entitytype="Product" fieldname="ProductCLPHPhrases" cvlseparator=" " />
+            </span>
+            <span id="ProductCLPPPhrases" class="instructionsItemContent">
+                <pim-param entitytype="Product" fieldname="ProductCLPPPhrases" cvlseparator=" " />
+            </span>
+            <span id="ProductCLPEUHPhrases" class="instructionsItemContent">
+                <pim-param entitytype="Product" fieldname="ProductCLPEUHPhrases" cvlseparator=" "/>
+            </span>
+            <span id="ProductCLPEUH208Ingredients" class="instructionsItemContent">
+                <pim-param entitytype="Product" fieldname="ProductCLPEUH208Ingredients" />
+            </span>
+            <span id="ProductSensitiveIngredients" class="instructionsItemContent">
+                <pim-param entitytype="Product" fieldname="ProductSensitiveIngredients" />
+            </span>
+            <span id="ProductTreatedArticlePhrasesCVL" class="instructionsItemContent">
+                <pim-param entitytype="Product" fieldname="ProductTreatedArticlePhrasesCVL" cvlseparator=" " />
+            </span>
+            <span id="ProductTreatedArticleIngredients" class="instructionsItemContent">
+                <pim-param entitytype="Product" fieldname="ProductTreatedArticleIngredients" />
+            </span>
+            <span id="ProductCombinedTreatedArticlePhrases" class="instructionsItemContent">
+                <pim-param entitytype="Product" fieldname="ProductCombinedTreatedArticlePhrases" />
+            </span>
+            <span id="ProductDetergencePhrases" class="instructionsItemContent">
+                <pim-param entitytype="Product" fieldname="ProductDetergencePhrases" />
+            </span>
+            <span id="ProductRestrictions" class="instructionsItemContent">
+                <pim-param entitytype="Product" fieldname="ProductRestrictions" />
+            </span>-->
+            <!--Dont remove pim-params below. hide if empty works ealier than JS, that injects data.-->
+            <div id="HealthAndSafety" class="instructionsItemContent">
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                Contains &lt; 5 % non-ionic surfactants.
+            </div>
+            <div hideifempty="DangerSymbols" style="; display: none;">
+                <div id="DangerSymbols" class="instructionsItemContent">
+                    
+                </div>
+            </div>
+        </div>
+        <div class="instructionsItem" hideifempty="ProductDeclarationOfPerformanceURL" style="; display: none;">
+            <div class="instructionsItemHeader">DECLARATION OF PERFORMANCE</div>
+            <div id="ProductDeclarationOfPerformanceURL" class="instructionsItemContent">
+                
+            </div>
+        </div>
+    </div>
+    <div hideifempty="CEMarkingTable" style="; display: none;">
+        <div id="CEMarkingTable">
+            
+        </div>
+    </div>
+    <div id="EmptyDiv4">
+
+    </div>
+    
+</body>
+</html>
